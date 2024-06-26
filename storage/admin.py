@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import mark_safe
 
 from storage.models import Storage, Box, StorageImage, Rent, City
 
@@ -11,6 +12,15 @@ class CityAdmin(admin.ModelAdmin):
 class StorageImageAdminInline(admin.TabularInline):
     model = StorageImage
     extra = 3
+
+    readonly_fields = ('image_view',)
+
+    def image_view(self, obj):
+        if obj.image:
+            return mark_safe(f'<img src="{obj.image.url}" width="100" height="100" />')
+        return 'Загрузите картинку'
+
+    image_view.short_description = 'Картинка'
 
 
 @admin.register(Storage)
