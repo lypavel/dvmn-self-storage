@@ -11,3 +11,7 @@ def faq(request):
 
 def boxes(request):
     return render(request, 'storage/boxes.html')
+
+
+def profile(request):
+    return render(request, 'storage/profile.html')
