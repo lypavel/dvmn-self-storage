@@ -42,11 +42,6 @@ class City(models.Model):
 
 
 class Storage(BaseModel):
-    owner = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        verbose_name='владелец'
-    )
     city = models.ForeignKey(
         to=City,
         on_delete=models.CASCADE,
@@ -58,13 +53,9 @@ class Storage(BaseModel):
         blank=True,
         verbose_name='адрес'
     )
-    volume = models.IntegerField(
-        default=1,
-        verbose_name='объем в м3'
-    )
     max_boxes = models.IntegerField(
         default=1,
-        verbose_name='макс кол-во товаров'
+        verbose_name='макс кол-во ячеек'
     )
     description = models.TextField(
         blank=True,
@@ -126,10 +117,21 @@ class StorageImage(models.Model):
 
 
 class Box(BaseModel):
+    class BoxType(models.TextChoices):
+        below_3_meters = ('3', 'До 3м²')
+        below_10_meters = ('10', 'До 10м²')
+        above_10_meters = ('10+', 'От 10м²')
+
     type = models.CharField(
         max_length=255,
         blank=True,
-        verbose_name='вид'
+        verbose_name='тип',
+        choices=BoxType.choices
+    )
+    number = models.CharField(
+        max_length=255,
+        db_index=True,
+        verbose_name='номер'
     )
     storage = models.ForeignKey(
         to=Storage,
@@ -143,7 +145,7 @@ class Box(BaseModel):
     )
     volume = models.IntegerField(
         default=1,
-        verbose_name='объем в м3'
+        verbose_name='объем в м³'
     )
     sizes = models.CharField(
         blank=True,
@@ -153,10 +155,17 @@ class Box(BaseModel):
     price = models.IntegerField(
         verbose_name='цена в месяц'
     )
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='владелец',
+        blank=True,
+        null=True
+    )
 
     class Meta:
-        verbose_name = 'Товар'
-        verbose_name_plural = 'Товары'
+        verbose_name = 'Ячейка'
+        verbose_name_plural = 'Ячейки'
 
     def __str__(self):
         return self.type
@@ -173,7 +182,7 @@ class Rent(BaseModel):
         to=Box,
         on_delete=models.CASCADE,
         related_name='rents',
-        verbose_name='Товар'
+        verbose_name='Ячейка'
     )
     start_date = models.DateField(
         verbose_name='дата начала'
