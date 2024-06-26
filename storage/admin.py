@@ -8,12 +8,18 @@ class CityAdmin(admin.ModelAdmin):
     list_display = ('id', 'name')
 
 
+class StorageImageAdminInline(admin.TabularInline):
+    model = StorageImage
+    extra = 3
+
+
 @admin.register(Storage)
 class StorageAdmin(admin.ModelAdmin):
     list_display = ('id', 'city', 'address')
     search_fields = ('city',)
-    autocomplete_fields = ('owner',)
     list_per_page = 20
+
+    inlines = (StorageImageAdminInline,)
 
 
 @admin.register(StorageImage)
@@ -25,6 +31,7 @@ class StorageImageAdmin(admin.ModelAdmin):
 @admin.register(Box)
 class BoxAdmin(admin.ModelAdmin):
     list_display = ('id', 'type', 'price')
+    autocomplete_fields = ('owner',)
     list_per_page = 20
 
 
