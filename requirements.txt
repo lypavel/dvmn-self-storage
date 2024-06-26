@@ -1,7 +1,9 @@
 Django==4.2.13
-environs==11.0.0
+django-cleanup==8.1.0
 django-phonenumber-field==7.3.0
+environs==11.0.0
+geopy==2.4.1
 Pillow
 phonenumbers==8.13.37
 pytils==0.4.1
-django-cleanup==8.1.0
+requests==2.32.3
