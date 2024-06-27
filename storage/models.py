@@ -97,6 +97,12 @@ class Storage(BaseModel):
         blank=True,
         verbose_name='высота потолка'
     )
+    feature = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name='особенность'
+    )
 
     objects = StorageQuerySet.as_manager()
 
