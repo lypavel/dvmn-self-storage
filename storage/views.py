@@ -26,32 +26,6 @@ def index(request):
     return render(request, 'storage/index.html', context)
 
 
-def serialize_storage(storage):
-    if storage.images.count():
-        image = storage.images.first().image.url
-    else:
-        image = None
-
-    return {
-        'id': storage.id,
-        'city': storage.city.name,
-        'address': storage.address,
-        'max_boxes': storage.max_boxes,
-        'boxes_available': storage.boxes_available,
-        'min_price': storage.min_price,
-        'contacts': storage.contacts,
-        'description': storage.description,
-        'route': storage.route,
-        'image': image,
-        'temperature': round(storage.temperature),
-        'ceiling_height': storage.ceiling_height,
-    }
-
-
-def faq(request):
-    return render(request, 'storage/faq.html')
-
-
 def storages(request):
     storages = Storage.objects.annotate_min_price()
     storages = storages.annotate_boxes_available()
@@ -78,25 +52,7 @@ def boxes(request, storage_id):
     all_boxes = current_storage.boxes.filter(owner=None)
     serialized_boxes = [serialize_box(box) for box in all_boxes]
 
-    boxes_to_3 = []
-    boxes_to_10 = []
-    boxes_from_10 = []
-
-    for box in serialized_boxes:
-        match box['type']:
-            case '3':
-                boxes_to_3.append(box)
-            case '10':
-                boxes_to_10.append(box)
-            case '10+':
-                boxes_from_10.append(box)
-
-    sorted_boxes = {
-        'boxes_to_3': boxes_to_3,
-        'boxes_to_10': boxes_to_10,
-        'boxes_from_10': boxes_from_10,
-        'all_boxes': all_boxes
-    }
+    categorized_boxes = categorize_boxes(serialized_boxes)
 
     storages = Storage.objects.prefetch_related('images').annotate_min_price()
     storages = storages.annotate_boxes_available()
@@ -115,10 +71,40 @@ def boxes(request, storage_id):
     context = {
         'storages': serialized_storages,
         'current_storage': current_storage_serialized,
-        'boxes': sorted_boxes
+        'boxes': categorized_boxes
     }
 
     return render(request, 'storage/boxes.html', context)
+
+
+def faq(request):
+    return render(request, 'storage/faq.html')
+
+
+def profile(request):
+    return render(request, 'storage/profile.html')
+
+
+def serialize_storage(storage):
+    if storage.images.count():
+        image = storage.images.first().image.url
+    else:
+        image = None
+
+    return {
+        'id': storage.id,
+        'city': storage.city.name,
+        'address': storage.address,
+        'max_boxes': storage.max_boxes,
+        'boxes_available': storage.boxes_available,
+        'min_price': storage.min_price,
+        'contacts': storage.contacts,
+        'description': storage.description,
+        'route': storage.route,
+        'image': image,
+        'temperature': round(storage.temperature),
+        'ceiling_height': storage.ceiling_height,
+    }
 
 
 def serialize_box(box):
@@ -132,5 +118,23 @@ def serialize_box(box):
     }
 
 
-def profile(request):
-    return render(request, 'storage/profile.html')
+def categorize_boxes(boxes):
+    boxes_to_3 = []
+    boxes_to_10 = []
+    boxes_from_10 = []
+
+    for box in boxes:
+        match box['type']:
+            case '3':
+                boxes_to_3.append(box)
+            case '10':
+                boxes_to_10.append(box)
+            case '10+':
+                boxes_from_10.append(box)
+
+    return {
+        'boxes_to_3': boxes_to_3,
+        'boxes_to_10': boxes_to_10,
+        'boxes_from_10': boxes_from_10,
+        'all_boxes': boxes
+    }
