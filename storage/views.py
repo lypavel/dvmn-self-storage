@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -157,6 +158,23 @@ def order_consultation(request):
     )
 
 
+@transaction.atomic()
 def process_consultation(request):
-    print(request.POST)
-    return render(request, 'base.html')
+    form = ConsultationForm()
+    if not request.method == 'POST':
+        return render(
+                request,
+                'storage/forms/success.html',
+                context={'consultation_form': form}
+            )
+
+    form = ConsultationForm(request.POST)
+    if not form.is_valid():
+        return render(
+                request,
+                'storage/forms/success.html',
+                context={'consultation_form': form}
+            )
+
+    form.save()
+    return render(request, 'storage/forms/success.html')

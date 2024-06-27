@@ -247,7 +247,7 @@ class Consultation(models.Model):
 
     class Meta:
         verbose_name = 'заказ консультации'
-        verbose_name = 'заказы консультаций'
+        verbose_name_plural = 'заказы консультаций'
 
     def __str__(self):
         return self.email
