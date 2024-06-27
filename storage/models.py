@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models import Count, Min, Q
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from pytils.translit import slugify as pytils_slugify
@@ -39,6 +40,18 @@ class City(models.Model):
             print(slugify(_(self.name)))
             self.slug = pytils_slugify(self.name)
         super(City, self).save(*args, **kwargs)
+
+
+class StorageQuerySet(models.QuerySet):
+    def annotate_min_price(self):
+        return self.annotate(min_price=Min('boxes__price'))
+
+    def annotate_boxes_available(self):
+        return self.annotate(
+            boxes_available=Count(
+                'boxes', filter=Q(boxes__owner=None)
+            )
+        )
 
 
 class Storage(BaseModel):
@@ -84,6 +97,8 @@ class Storage(BaseModel):
         blank=True,
         verbose_name='высота потолка'
     )
+
+    objects = StorageQuerySet.as_manager()
 
     class Meta:
         verbose_name = 'Хранилище'
