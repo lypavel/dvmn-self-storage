@@ -1,7 +1,9 @@
+from django.db import transaction
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .coordinates import get_nearest_storage
+from .forms import ConsultationForm
 from .models import Storage
 
 
@@ -20,7 +22,8 @@ def index(request):
 
     serialized_nearest_storage = serialize_storage(nearest_storage.first())
     context = {
-        'nearest_storage': serialized_nearest_storage
+        'nearest_storage': serialized_nearest_storage,
+        'consultation_form': ConsultationForm()
     }
 
     return render(request, 'storage/index.html', context)
@@ -34,7 +37,8 @@ def storages(request):
     ]
 
     context = {
-        'storages': serialized_storages
+        'storages': serialized_storages,
+        'consultation_form': ConsultationForm(),
     }
 
     return render(request, 'storage/storages.html', context)
@@ -71,14 +75,19 @@ def boxes(request, storage_id):
     context = {
         'storages': serialized_storages,
         'current_storage': current_storage_serialized,
-        'boxes': categorized_boxes
+        'boxes': categorized_boxes,
+        'consultation_form': ConsultationForm(),
     }
 
     return render(request, 'storage/boxes.html', context)
 
 
 def faq(request):
-    return render(request, 'storage/faq.html')
+    return render(
+        request,
+        'storage/faq.html',
+        context={'consultation_form': ConsultationForm()}
+    )
 
 
 def profile(request):
@@ -139,3 +148,33 @@ def categorize_boxes(boxes):
         'boxes_from_10': boxes_from_10,
         'all_boxes': boxes
     }
+
+
+def order_consultation(request):
+    return render(
+        request,
+        'storage/order-consultation.html',
+        context={'consultation_form': ConsultationForm()}
+    )
+
+
+@transaction.atomic()
+def process_consultation(request):
+    form = ConsultationForm()
+    if not request.method == 'POST':
+        return render(
+                request,
+                'storage/forms/success.html',
+                context={'consultation_form': form}
+            )
+
+    form = ConsultationForm(request.POST)
+    if not form.is_valid():
+        return render(
+                request,
+                'storage/forms/success.html',
+                context={'consultation_form': form}
+            )
+
+    form.save()
+    return render(request, 'storage/forms/success.html')

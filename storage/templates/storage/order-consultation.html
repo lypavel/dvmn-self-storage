@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+<main class="container mt-header">
+	{% include 'storage/forms/consultation_form.html' %}
+</main>
+{% endblock %}

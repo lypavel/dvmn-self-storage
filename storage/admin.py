@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import mark_safe
 
-from storage.models import Storage, Box, StorageImage, Rent, City
+from storage.models import Storage, Box, StorageImage, Rent, City, Consultation
 
 
 @admin.register(City)
@@ -48,4 +48,10 @@ class BoxAdmin(admin.ModelAdmin):
 @admin.register(Rent)
 class RentAdmin(admin.ModelAdmin):
     list_display = ('id',)
+    list_per_page = 20
+
+
+@admin.register(Consultation)
+class ConsultationAdmin(admin.ModelAdmin):
+    list_display = ('email', 'status')
     list_per_page = 20
