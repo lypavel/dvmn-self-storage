@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Count, Min, Q
+from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from pytils.translit import slugify as pytils_slugify
@@ -215,3 +216,38 @@ class Rent(BaseModel):
     class Meta:
         verbose_name = 'Аренда'
         verbose_name_plural = 'Аренды'
+
+
+class Consultation(models.Model):
+    class ConsultationStatus(models.TextChoices):
+        new = ('new', 'Новая')
+        completed = ('completed', 'Обработана')
+
+    email = models.EmailField(
+        verbose_name='email',
+        max_length=100,
+        db_index=True
+    )
+    status = models.CharField(
+        max_length=255,
+        verbose_name='статус',
+        choices=ConsultationStatus.choices,
+        default=ConsultationStatus.new,
+        db_index=True
+    )
+    created_at = models.DateTimeField(
+        verbose_name='дата создания',
+        default=timezone.now
+    )
+    completed_at = models.DateTimeField(
+        verbose_name='дата обработки',
+        blank=True,
+        null=True
+    )
+
+    class Meta:
+        verbose_name = 'заказ консультации'
+        verbose_name = 'заказы консультаций'
+
+    def __str__(self):
+        return self.email
