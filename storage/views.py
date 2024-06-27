@@ -104,6 +104,7 @@ def serialize_storage(storage):
         'image': image,
         'temperature': round(storage.temperature),
         'ceiling_height': storage.ceiling_height,
+        'feature': storage.feature if storage.feature else None
     }
 
 
