@@ -7,16 +7,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'css/Style.css' %}">
-    <title>{% block title %}SelfStorage{% endblock %}</title>
+    <title>{% block title %}SelfStorage{% endblock %} - SelfStorage</title>
   </head>
 
   <body>
-    {% include "storage/header.html" %}
+    {% include "header.html" %}
     {% include "storage/modals/user_registration.html" %}
     {% include "storage/modals/user_login.html" %}
     {% include "storage/modals/user_recovery.html" %}
     {% block content %}{% endblock %}
-    {% include "storage/footer.html" %}
+    {% include "footer.html" %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
   </body>
 </html>
