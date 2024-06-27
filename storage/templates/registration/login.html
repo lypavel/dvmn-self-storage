@@ -1,4 +1,8 @@
-<aside class="modal fade" id="SignModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Логин{% endblock %}
+
+{% block content %}
     <div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
         <div class="modal-content">
             <div class="modal-header border-0">
@@ -12,7 +16,7 @@
                     <input type="email" required name="username"
                            class="form-control  border-8 mb-4 py-3 px-5 border-0 fs_24 SelfStorage__bg_lightgrey"
                            placeholder="E-mail">
-                    <input type="password" required name="password"
+                    <input type="text" required name="password"
                            class="form-control  border-8 mb-4 py-3 px-5 border-0 fs_24 SelfStorage__bg_lightgrey"
                            placeholder="Пароль">
                     <a href="#" class="SelfStorage_orange" data-bs-toggle="modal" data-bs-target="#ForgetModal"
@@ -26,4 +30,4 @@
             </div>
         </div>
     </div>
-</aside>
+{% endblock %}

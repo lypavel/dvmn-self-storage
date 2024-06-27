@@ -7,10 +7,10 @@ from user.models import User
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
-    list_display = ('id', 'first_name', 'last_name', 'phone_number')
+    list_display = ('id', 'first_name', 'last_name', 'phone_number', 'email')
     ordering = ('id',)
     fieldsets = (
-        (None, {'fields': ('username',)}),
+        (None, {'fields': ('username', 'email')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name')}),
         (
             _('Permissions'),
