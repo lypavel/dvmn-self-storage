@@ -139,3 +139,7 @@ def categorize_boxes(boxes):
         'boxes_from_10': boxes_from_10,
         'all_boxes': boxes
     }
+
+
+def order_consultation(request):
+    return render(request, 'storage/order-consultation.html')
