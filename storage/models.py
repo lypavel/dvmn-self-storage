@@ -190,10 +190,14 @@ class Box(BaseModel):
         verbose_name_plural = 'Ячейки'
 
     def __str__(self):
-        return self.type
+        return self.number
 
 
 class Rent(BaseModel):
+    class PaymentStatus(models.TextChoices):
+        paid = ('paid', 'Оплачено')
+        not_paid = ('not_paid', 'Не оплачено')
+
     user = models.ForeignKey(
         to=User,
         on_delete=models.CASCADE,
@@ -211,6 +215,16 @@ class Rent(BaseModel):
     )
     end_date = models.DateField(
         verbose_name='дата окончания'
+    )
+    price = models.PositiveIntegerField(
+        verbose_name='Цена',
+    )
+    payment_status = models.CharField(
+        verbose_name='Статус оплаты',
+        max_length=50,
+        choices=PaymentStatus.choices,
+        default=PaymentStatus.not_paid,
+        db_index=True
     )
 
     class Meta:

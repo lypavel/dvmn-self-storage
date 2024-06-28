@@ -1,6 +1,8 @@
+from datetime import date
+
 from django import forms
 
-from .models import Consultation
+from .models import Consultation, Rent
 
 
 class ConsultationForm(forms.ModelForm):
@@ -18,3 +20,18 @@ class ConsultationForm(forms.ModelForm):
                 }
             )
         }
+
+
+class OrderForm(forms.ModelForm):
+    start_date = forms.DateField(
+        label='Дата начала',
+        widget=forms.widgets.SelectDateWidget(),
+        initial=date.today
+    )
+    period = forms.IntegerField(
+        label='Срок аренды, мес'
+    )
+
+    class Meta:
+        model = Rent
+        fields = ('id',)
