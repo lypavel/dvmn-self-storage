@@ -1,4 +1,5 @@
 from dateutil.relativedelta import relativedelta
+from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -12,10 +13,10 @@ from .models import Storage, Box
 def index(request):
     nearest_storage_id = get_nearest_storage(request)
     if not nearest_storage_id:
-        nearest_storage_id = Storage.objects\
-            .select_related('city')\
-            .order_by('?')\
-            .first()\
+        nearest_storage_id = Storage.objects \
+            .select_related('city') \
+            .order_by('?') \
+            .first() \
             .id
 
     nearest_storage = Storage.objects.filter(id=nearest_storage_id)
@@ -92,8 +93,17 @@ def faq(request):
     )
 
 
+@login_required
 def profile(request):
-    return render(request, 'storage/profile.html')
+    user = request.user
+
+    return render(
+        request,
+        'storage/profile.html',
+        context={
+            'user': user
+        }
+    )
 
 
 def serialize_storage(storage):
@@ -166,18 +176,18 @@ def process_consultation(request):
     form = ConsultationForm()
     if not request.method == 'POST':
         return render(
-                request,
-                'storage/forms/success.html',
-                context={'consultation_form': form}
-            )
+            request,
+            'storage/forms/success.html',
+            context={'consultation_form': form}
+        )
 
     form = ConsultationForm(request.POST)
     if not form.is_valid():
         return render(
-                request,
-                'storage/forms/success.html',
-                context={'consultation_form': form}
-            )
+            request,
+            'storage/forms/success.html',
+            context={'consultation_form': form}
+        )
 
     form.save()
     return render(request, 'storage/forms/success.html')

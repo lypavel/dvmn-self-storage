@@ -1,11 +1,12 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 
-from user.forms import UserRegisterForm
+from user.forms import UserRegisterForm, UserContactsUpdateForm, UserInfoUpdateForm
 from user.services import generate_uid_with_token
 from user.tasks import send_message_to_email
 
@@ -45,3 +46,28 @@ def verify_email(request):
         user.is_active = True
         user.save()
     return redirect(reverse('storage:index'))
+
+
+@login_required
+def update_profile_info(request):
+    if request.method == 'POST':
+        form = UserInfoUpdateForm(
+            request.POST,
+            request.FILES,
+            instance=request.user
+        )
+        if form.is_valid():
+            form.save()
+    return redirect(reverse('storage:profile'))
+
+
+@login_required
+def update_profile_contacts(request):
+    if request.method == 'POST':
+        form = UserContactsUpdateForm(
+            request.POST,
+            instance=request.user
+        )
+        if form.is_valid():
+            form.save()
+    return redirect(reverse('storage:profile'))
