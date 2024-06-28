@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
@@ -30,7 +30,7 @@ def register(request):
                 uid=uid
             )
 
-    return redirect(reverse('storage:index'))
+    return render(request, 'registration/registration.html')
 
 
 def verify_email(request):
