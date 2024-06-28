@@ -12,7 +12,11 @@
         <div class="collapse navbar-collapse justify-content-end" id="navbar">
             <ul class="navbar-nav">
                 <li class="nav-item me-5">
-                    <a class="nav-link SelfStorage_black" href="{% url 'storage:profile' %}">Профиль</a>
+                    {% if request.user.is_authenticated %}
+                        <a class="nav-link SelfStorage_green" href="{% url 'storage:profile' %}">Ваш профиль</a>
+                    {% else %}
+                        <a class="nav-link SelfStorage_green" href="{% url 'user:login' %}">Войти</a>
+                    {% endif %}
                 </li>
                 <li class="nav-item me-5">
                     <a class="nav-link SelfStorage_black" href="{% url 'storage:order-consultation' %}">Рассчитать
@@ -23,13 +27,6 @@
                 </li>
                 <li class="nav-item me-5">
                     <a class="nav-link SelfStorage_black" href="{% url 'storage:storages' %}">Арендовать бокс</a>
-                </li>
-                <li class="nav-item me-5">
-                    {% if request.user.is_authenticated %}
-                        <a class="nav-link SelfStorage_green" href="{% url 'storage:profile' %}">{{ request.user.email }}</a>
-                    {% else %}
-                        <a class="nav-link SelfStorage_green" href="{% url 'user:login' %}">Войти</a>
-                    {% endif %}
                 </li>
                 <li class="nav-item d-flex align-items-center">
                     <div class="d-flex justify-content-center align-items-center rounded-pill SelfStorage__bg_green me-2"

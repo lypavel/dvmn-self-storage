@@ -1,9 +1,10 @@
+from datetime import date
+
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
 
 from .coordinates import get_nearest_storage
 from .forms import ConsultationForm, OrderForm
@@ -96,12 +97,25 @@ def faq(request):
 @login_required
 def profile(request):
     user = request.user
+    rents = user.rents.select_related(
+        'box', 'box__storage', 'box__storage__city'
+    )
+
+    active_rents = rents.filter(end_date__gte=date.today())
+    previous_rents = rents.filter(end_date__lt=date.today(), is_empty=True)
+    expired_rents = rents.filter(end_date__lt=date.today(), is_empty=False)
+
+    print(active_rents)
 
     return render(
         request,
         'storage/profile.html',
         context={
-            'user': user
+            'user': user,
+            'all_rents': rents,
+            'active_rents': active_rents,
+            'previous_rents': previous_rents,
+            'expired_rents': expired_rents
         }
     )
 
@@ -194,10 +208,8 @@ def process_consultation(request):
 
 
 @transaction.atomic()
+@login_required
 def order_box(request, box_id):
-    if request.user.is_anonymous:
-        return redirect(reverse('user:login'))
-
     box = Box.objects.select_related('storage', 'owner').get(id=box_id)
 
     serialized_box = {

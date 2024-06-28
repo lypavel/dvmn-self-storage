@@ -1,6 +1,6 @@
 from django.urls import path
 
-from storage.views import boxes, faq, index, order_consultation, \
+from storage.views import boxes, faq, index, order_box, order_consultation, \
     process_consultation, profile, storages
 
 app_name = 'storage'
@@ -17,4 +17,5 @@ urlpatterns = [
         process_consultation,
         name='process-consultation'
     ),
+    path('order-box/<int:box_id>', order_box, name='order-box')
 ]
