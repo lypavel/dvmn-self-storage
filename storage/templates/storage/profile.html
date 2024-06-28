@@ -89,7 +89,7 @@
 
                         {% if not all_rents %}
                             <h4 class="SelfStorage_grey my-5">У вас еще нет заказов.<br>Но вы можете арендовать свой первый бокс  по  привлекательной цене прямо сейчас</h4>
-					        <div><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3">Арендовать бокс</button></div>
+					        <a href="{% url 'storage:storages' %}"><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3">Арендовать бокс</button></a>
                         {% else %}
                             {% if expired_rents %}
                                 <h2 class="fw-bold SelfStorage_orange mb-5">Просроченные заказы</h2>

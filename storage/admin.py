@@ -45,7 +45,7 @@ class StorageImageAdmin(admin.ModelAdmin):
 
 @admin.register(Box)
 class BoxAdmin(admin.ModelAdmin):
-    list_display = ('id', 'number', 'type', 'price')
+    list_display = ('id', 'number', 'owner', 'type', 'price')
     autocomplete_fields = ('owner',)
     list_per_page = 20
 
@@ -54,9 +54,11 @@ class BoxAdmin(admin.ModelAdmin):
 
 @admin.register(Rent)
 class RentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'start_date', 'end_date')
+    list_display = ('id', 'user', 'start_date', 'end_date', 'promo_code')
     list_filter = ('end_date',)
     list_per_page = 20
+
+    search_fields = ('promo_code', 'payment_status', 'end_date')
 
 
 @admin.register(Consultation)

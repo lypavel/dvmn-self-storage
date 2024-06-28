@@ -31,7 +31,11 @@ class OrderForm(forms.ModelForm):
     period = forms.IntegerField(
         label='Срок аренды, мес'
     )
+    promo_code = forms.CharField(
+        label='Промокод',
+        max_length=50,
+    )
 
     class Meta:
         model = Rent
-        fields = ('id',)
+        fields = ('id', 'promo_code')

@@ -214,7 +214,8 @@ class Rent(BaseModel):
         verbose_name='дата начала'
     )
     end_date = models.DateField(
-        verbose_name='дата окончания'
+        verbose_name='дата окончания',
+        db_index=True
     )
     price = models.PositiveIntegerField(
         verbose_name='Цена',
@@ -224,6 +225,13 @@ class Rent(BaseModel):
         max_length=50,
         choices=PaymentStatus.choices,
         default=PaymentStatus.not_paid,
+        db_index=True
+    )
+    promo_code = models.CharField(
+        verbose_name='Промокод',
+        max_length=50,
+        null=True,
+        blank=True,
         db_index=True
     )
     is_empty = models.BooleanField(
