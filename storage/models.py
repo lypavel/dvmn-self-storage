@@ -226,6 +226,11 @@ class Rent(BaseModel):
         default=PaymentStatus.not_paid,
         db_index=True
     )
+    is_empty = models.BooleanField(
+        verbose_name='Пустая',
+        db_index=True,
+        default=True
+    )
 
     class Meta:
         verbose_name = 'Аренда'

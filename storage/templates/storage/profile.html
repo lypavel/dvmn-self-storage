@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load storage_extras %}
 
 {% block title %}Личный кабинет{% endblock %}
 
@@ -85,48 +86,89 @@
                     </div>
                     <div class="tab-pane fade" id="Rent" role="tabpanel" aria-labelledby="Rent-tab">
                         <h1 class="fw-bold SelfStorage_green mb-5">Добрый день, {{ user.first_name }}!</h1>
-                        <a href="#" class="SelfStorage_orange">История аренды</a>
-                        <h4 class="SelfStorage_grey my-3">Срок Вашей аренды подходит к концу :(<br>Вы можете продлить
-                            аренду или забрать вещи до 28 июня 2022 года включительно.</h4>
-                        <div class="mb-5">
-                            <h4 class="SelfStorage_green">Мой склад №1</h4>
-                            <h4>Одинцово, ул. Северная, д. 36</h4>
-                            <h4 class="SelfStorage_green">Мой бокс</h4>
-                            <h4>№2389-12</h4>
-                            <h4 class="SelfStorage_green">Срок аренды</h4>
-                            <h4>15.03.2022 - 28.06.2022</h4>
-                            <div>
-                                <button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_green SelfStorage__btn2_green mb-3">
-                                    Продлить аренду
-                                </button>
-                            </div>
-                            <div>
-                                <button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3">
-                                    Открыть бокс
-                                </button>
-                            </div>
-                            <a href="#" class="SelfStorage_orange">Нужна помощь?</a>
-                        </div>
 
-                        <div class="mb-5">
-                            <h4 class="SelfStorage_green">Мой склад №2</h4>
-                            <h4>Люберцы, ул. Советская, д. 88</h4>
-                            <h4 class="SelfStorage_green">Мой бокс</h4>
-                            <h4>№2335-10</h4>
-                            <h4 class="SelfStorage_green">Срок аренды</h4>
-                            <h4>18.03.2022 - 21.09.2022</h4>
-                            <div>
-                                <button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_green SelfStorage__btn2_green mb-3">
-                                    Продлить аренду
-                                </button>
-                            </div>
-                            <div>
-                                <button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3">
-                                    Открыть бокс
-                                </button>
-                            </div>
-                            <a href="#" class="SelfStorage_orange">Нужна помощь?</a>
-                        </div>
+                        {% if not all_rents %}
+                            <h4 class="SelfStorage_grey my-5">У вас еще нет заказов.<br>Но вы можете арендовать свой первый бокс  по  привлекательной цене прямо сейчас</h4>
+					        <div><button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3">Арендовать бокс</button></div>
+                        {% else %}
+                            {% if expired_rents %}
+                                <h2 class="fw-bold SelfStorage_orange mb-5">Просроченные заказы</h2>
+                                {% for rent in expired_rents %}
+                                    <div class="mb-5">
+                                        <h3 class="SelfStorage_green">Заказ №{{rent.id}}</h4>
+                                        <h4 class="SelfStorage_grey my-3">Срок аренды этого заказа подошёл к концу и ваши вещи теперь хранятся в ней по повышенному тарифу.<br>
+                                            Заберите вещи со склада до {{ rent.end_date|final_date }} или они будут выброшены.</h4>
+                                        <h4 class="SelfStorage_green">Адрес склада</h4>
+                                        <h4>{{rent.box.storage.city.name}}, {{rent.box.storage.address}}</h4>
+                                        <h4 class="SelfStorage_green">№ бокса</h4>
+                                        <h4>{{rent.box.number}}</h4>
+                                        <h4 class="SelfStorage_green">Срок аренды</h4>
+                                        <h4>{{rent.start_date}} - {{rent.end_date}}</h4>
+                                        <h4 class="SelfStorage_green">Статус оплаты</h4>
+                                        <h4>{{rent.get_payment_status_display}}</h4>
+                                        <div>
+                                            <button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_green SelfStorage__btn2_green mb-3">
+                                                Продлить аренду
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3">
+                                                Открыть бокс
+                                            </button>
+                                        </div>
+                                        <a href="#" class="SelfStorage_orange">Нужна помощь?</a>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+
+                            {% if active_rents %}
+                                <h2 class="fw-bold SelfStorage_orange mb-5">Текущие заказы</h2>
+                                {% for rent in active_rents %}
+                                    <div class="mb-5">
+                                        <h3 class="SelfStorage_green">Заказ №{{rent.id}}</h4>
+                                        {% if rent.end_date|days_remain <= 7 %}
+                                        <h4 class="SelfStorage_grey my-3">Срок аренды этого заказа скоро подойдёт к концу.</h4>
+                                        {% endif %}
+                                        <h4 class="SelfStorage_green">Адрес склада</h4>
+                                        <h4>{{rent.box.storage.city.name}}, {{rent.box.storage.address}}</h4>
+                                        <h4 class="SelfStorage_green">№ бокса</h4>
+                                        <h4>{{rent.box.number}}</h4>
+                                        <h4 class="SelfStorage_green">Срок аренды</h4>
+                                        <h4>{{rent.start_date}} - {{rent.end_date}}</h4>
+                                        <h4 class="SelfStorage_green">Статус оплаты</h4>
+                                        <h4>{{rent.get_payment_status_display}}</h4>
+                                        <div>
+                                            <button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_green SelfStorage__btn2_green mb-3">
+                                                Продлить аренду
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3">
+                                                Открыть бокс
+                                            </button>
+                                        </div>
+                                        <a href="#" class="SelfStorage_orange">Нужна помощь?</a>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+
+                            {% if previous_rents %}
+                                <h2 class="fw-bold SelfStorage_orange mb-5">Предыдущие заказы</h2>
+                                {% for rent in previous_rents %}
+                                    <div class="mb-5">
+                                        <h3 class="SelfStorage_green">Заказ №{{rent.id}}</h4>
+                                        <h4 class="SelfStorage_green">Адрес склада</h4>
+                                        <h4>{{rent.box.storage.city.name}}, {{rent.box.storage.address}}</h4>
+                                        <h4 class="SelfStorage_green">№ бокса</h4>
+                                        <h4>{{rent.box.number}}</h4>
+                                        <h4 class="SelfStorage_green">Срок аренды</h4>
+                                        <h4>{{rent.start_date}} - {{rent.end_date}}</h4>
+                                        <h4 class="SelfStorage_green">Статус оплаты</h4>
+                                        <h4>{{rent.get_payment_status_display}}</h4>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endif %}
                     </div>
                 </div>
             </div>

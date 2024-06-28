@@ -54,7 +54,8 @@ class BoxAdmin(admin.ModelAdmin):
 
 @admin.register(Rent)
 class RentAdmin(admin.ModelAdmin):
-    list_display = ('id',)
+    list_display = ('id', 'start_date', 'end_date')
+    list_filter = ('end_date',)
     list_per_page = 20
 
 
