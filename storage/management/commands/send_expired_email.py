@@ -11,7 +11,7 @@ class Command(BaseCommand):
     help = 'Send email notifications for expired rents'
 
     def handle(self, *args, **kwargs):
-        tomorrow = make_aware(datetime.datetime.now() + datetime.timedelta(days=1))
+        tomorrow = make_aware(datetime.datetime.now())
 
         expiring_rents = Rent.objects.filter(
             end_date=tomorrow.date()
