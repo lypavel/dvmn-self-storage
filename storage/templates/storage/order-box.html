@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Заказать бокс{% endblock %}
+
+{% block content %}
+<main class="container mt-header">
+  <article class="row">
+	<div class="col-12 col-lg-6 offset-lg-3 mb-3 mb-lg-0">
+		{% if not rent %}
+			<h1 class="fw-bold SelfStorage_green mb-5">Сведения о заказе</h1>
+		{% else %}
+			<h1 class="fw-bold SelfStorage_green mb-5">Ваш заказ №{{ rent.id }} успешно оформлен.</h1>
+		{% endif %}
+		<h4 class="fw-lighter SelfStorage_green mb-5">Адрес хранилища: {{ box.storage }}</h4>
+		<h4 class="fw-lighter SelfStorage_green mb-5">Бокс №{{ box.number }}, размеры: {{ box.sizes }} м²</h4>
+		{% if not rent %}
+			<h4 class="fw-lighter SelfStorage_grey mb-5">Цена за месяц: {{ box.price }} ₽</h4>
+			
+			<form action="/order-box/{{ box.id }}" method="post">
+				{% csrf_token %}
+				<table class="table text-left text-truncate mb-5">
+					{{ order_form }}
+				</table>
+				<input type="submit" value="Оформить заказ" class="btn border-8 py-3 px-5 w-100 text-white fs_24 SelfStorage__bg_orange SelfStorage__btn2_orange">
+			</form>
+		{% else %}
+			<h4 class="fw-lighter SelfStorage_green mb-5">Срок аренды: {{ rent_period }} мес.</h4>
+			<h4 class="fw-lighter SelfStorage_green mb-5">Цена заказа: {{ rent.price }} ₽</h4>
+			<h5 class="fw-lighter SelfStorage_grey mb-5">Наш менеджер скоро свяжется с вами для уточнения деталей.</h5>
+		{%endif%}
+	</div>
+  </article>
+</main>
+{% endblock %}

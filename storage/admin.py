@@ -23,6 +23,11 @@ class StorageImageAdminInline(admin.TabularInline):
     image_view.short_description = 'Картинка'
 
 
+class RentAdminInline(admin.TabularInline):
+    model = Rent
+    extra = 0
+
+
 @admin.register(Storage)
 class StorageAdmin(admin.ModelAdmin):
     list_display = ('id', 'city', 'address')
@@ -40,9 +45,11 @@ class StorageImageAdmin(admin.ModelAdmin):
 
 @admin.register(Box)
 class BoxAdmin(admin.ModelAdmin):
-    list_display = ('id', 'type', 'price')
+    list_display = ('id', 'number', 'type', 'price')
     autocomplete_fields = ('owner',)
     list_per_page = 20
+
+    inlines = (RentAdminInline,)
 
 
 @admin.register(Rent)

@@ -1,11 +1,13 @@
+from dateutil.relativedelta import relativedelta
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 
 from .coordinates import get_nearest_storage
-from .forms import ConsultationForm
-from .models import Storage
+from .forms import ConsultationForm, OrderForm
+from .models import Storage, Box
 
 
 def index(request):
@@ -129,6 +131,7 @@ def serialize_storage(storage):
 
 def serialize_box(box):
     return {
+        'id': box.id,
         'number': box.number,
         'type': box.type,
         'floor': box.floor,
@@ -188,3 +191,74 @@ def process_consultation(request):
 
     form.save()
     return render(request, 'storage/forms/success.html')
+
+
+@transaction.atomic()
+def order_box(request, box_id):
+    if request.user.is_anonymous:
+        return redirect(reverse('user:login'))
+
+    box = Box.objects.select_related('storage', 'owner').get(id=box_id)
+
+    serialized_box = {
+        'id': box.id,
+        'number': box.number,
+        'sizes': box.sizes,
+        'price': box.price,
+        'storage': f'{box.storage.city}, {box.storage.address}'
+    }
+
+    if box.owner is not None:
+        if box.owner.id != request.user.id:
+            return HttpResponse('Ячейка уже занята.')
+
+    if request.method == 'POST':
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            rent = form.save(commit=False)
+            period = form.cleaned_data['period']
+            start_date = form.cleaned_data['start_date']
+            rent.user = request.user
+            rent.box = box
+            rent.price = serialized_box['price'] * period
+            rent.start_date = start_date
+            rent.end_date = start_date + relativedelta(months=period)
+            rent.save()
+
+            Box.objects.filter(pk=box.id).update(owner=request.user)
+
+        context = {
+            'box': serialized_box,
+            'rent': rent,
+            'rent_period': period,
+            'order_form': None
+        }
+
+        return render(request, 'storage/order-box.html', context)
+
+    context = {
+        'box': serialized_box,
+        'order_form': OrderForm()
+    }
+
+    return render(request, 'storage/order-box.html', context)
+
+
+def confirm_box_order(request, box_id):
+    print(request.POST)
+
+    box = Box.objects.select_related('storage', 'owner').get(id=box_id)
+
+    serialized_box = {
+        'id': box.id,
+        'number': box.number,
+        'sizes': box.sizes,
+        'price': box.price,
+        'storage': f'{box.storage.city}, {box.storage.address}'
+    }
+
+    context = {
+        'box': serialized_box,
+        'total_price': 0
+    }
+    return (request, 'storage/order-confirm.html', context)
