@@ -30,6 +30,7 @@ def register(request):
                 token=token,
                 uid=uid
             )
+            return redirect(reverse('storage:index'))
 
     return render(request, 'registration/registration.html')
 
