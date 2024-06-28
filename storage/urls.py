@@ -1,7 +1,5 @@
-from django.conf.urls.static import static
 from django.urls import path
 
-from self_storage import settings
 from storage.views import boxes, faq, index, order_consultation, \
     process_consultation, profile, storages
 
@@ -19,4 +17,4 @@ urlpatterns = [
         process_consultation,
         name='process-consultation'
     ),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
