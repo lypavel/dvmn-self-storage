@@ -7,7 +7,7 @@ User = get_user_model()
 class UserRegisterForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ('email', 'password')
+        fields = ('email', 'phone_number', 'password')
 
 
 class UserContactsUpdateForm(forms.ModelForm):

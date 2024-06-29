@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from pytils.translit import slugify as pytils_slugify
+from phonenumber_field.modelfields import PhoneNumberField
 
 User = get_user_model()
 
@@ -184,6 +185,11 @@ class Box(BaseModel):
         blank=True,
         null=True
     )
+    is_empty = models.BooleanField(
+        verbose_name='Пустая',
+        db_index=True,
+        default=True
+    )
 
     class Meta:
         verbose_name = 'Ячейка'
@@ -194,9 +200,13 @@ class Box(BaseModel):
 
 
 class Rent(BaseModel):
-    class PaymentStatus(models.TextChoices):
-        paid = ('paid', 'Оплачено')
-        not_paid = ('not_paid', 'Не оплачено')
+    class RentStatus(models.TextChoices):
+        new = ('new', 'Ожидает обработки')
+        processed = ('processed', 'Ожидает оплаты')
+        delivery = ('delivery', 'Доставка вещей на склад')
+        active = ('active', 'Активная')
+        inactive = ('inactive', 'Неактивная')
+        expired = ('expired', 'Просрочена')
 
     user = models.ForeignKey(
         to=User,
@@ -220,11 +230,24 @@ class Rent(BaseModel):
     price = models.PositiveIntegerField(
         verbose_name='Цена',
     )
-    payment_status = models.CharField(
-        verbose_name='Статус оплаты',
+    rent_status = models.CharField(
+        verbose_name='Статус аренды',
         max_length=50,
-        choices=PaymentStatus.choices,
-        default=PaymentStatus.not_paid,
+        choices=RentStatus.choices,
+        default=RentStatus.new,
+        db_index=True
+    )
+    phone_number = PhoneNumberField(
+        verbose_name='номер телефона',
+        region='RU',
+        null=True,
+        blank=True
+    )
+    address = models.CharField(
+        verbose_name='Адрес клиента',
+        max_length=255,
+        null=True,
+        blank=True,
         db_index=True
     )
     promo_code = models.CharField(
@@ -233,11 +256,6 @@ class Rent(BaseModel):
         null=True,
         blank=True,
         db_index=True
-    )
-    is_empty = models.BooleanField(
-        verbose_name='Пустая',
-        db_index=True,
-        default=True
     )
 
     class Meta:

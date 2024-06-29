@@ -58,7 +58,7 @@ class RentAdmin(admin.ModelAdmin):
     list_filter = ('end_date',)
     list_per_page = 20
 
-    search_fields = ('promo_code', 'payment_status', 'end_date')
+    search_fields = ('promo_code', 'rent_status', 'end_date')
 
 
 @admin.register(Consultation)

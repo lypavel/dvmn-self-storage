@@ -22,11 +22,16 @@
 				<table class="table text-left text-truncate mb-5">
 					{{ order_form }}
 				</table>
+				<div><p>* - обязательно для заполнения</p></div>
+				
 				<input type="submit" value="Оформить заказ" class="btn border-8 py-3 px-5 w-100 text-white fs_24 SelfStorage__bg_orange SelfStorage__btn2_orange">
 			</form>
 		{% else %}
 			<h4 class="fw-lighter SelfStorage_green mb-5">Срок аренды: {{ rent_period }} мес.</h4>
 			<h4 class="fw-lighter SelfStorage_green mb-5">Цена заказа: {{ rent.price }} ₽</h4>
+			{% if rent.address %}
+				<h4 class="fw-lighter SelfStorage_green mb-5">Курьер заберёт вещи по адресу: {{ rent.address }}<br><br>Стоимость доставки вещей будет согласована с менеджером.</h4>
+			{% endif %}
 			<h5 class="fw-lighter SelfStorage_grey mb-5">Наш менеджер скоро свяжется с вами для уточнения деталей.</h5>
 		{%endif%}
 	</div>

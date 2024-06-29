@@ -43,9 +43,18 @@ class User(AbstractUser):
     phone_number = PhoneNumberField(
         verbose_name='номер телефона'
     )
+    address = models.CharField(
+        verbose_name='Адрес клиента',
+        max_length=255,
+        null=True,
+        blank=True,
+        db_index=True
+    )
     image = models.ImageField(
         upload_to='user',
-        verbose_name='аватарка'
+        verbose_name='аватарка',
+        null=True,
+        blank=True
     )
 
     objects = UserManager()
