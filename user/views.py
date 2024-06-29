@@ -6,7 +6,8 @@ from django.urls import reverse
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 
-from user.forms import UserRegisterForm, UserContactsUpdateForm, UserInfoUpdateForm
+from user.forms import UserRegisterForm, UserContactsUpdateForm, \
+    UserInfoUpdateForm
 from user.services import generate_uid_with_token
 from user.tasks import send_message_to_email
 
@@ -20,9 +21,11 @@ def register(request):
             user_data = form.cleaned_data
             password = user_data.pop('password')
             email = user_data.pop('email')
+            phone_number = user_data.pop('phone_number')
             user = User.objects.create_user(
                 password=password,
                 email=email,
+                phone_number=phone_number,
             )
             token, uid = generate_uid_with_token(user)
             send_message_to_email.delay(

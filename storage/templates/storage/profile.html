@@ -44,6 +44,10 @@
                                     <input type="tel" name="last_name" id="last_name"
                                            class="form-control fs_24 ps-2 SelfStorage__input"
                                            value="{{ user.last_name|default:'' }}">
+                                    <label class="fs_24 SelfStorage_green ms-2" for="phone_number">Адрес</label>
+                                    <input type="tel" name="address" id="address"
+                                           class="form-control fs_24 ps-2 SelfStorage__input"
+                                           value="{{ user.address|default:'' }}">
                                     <button type="submit" class="btn SelfStorage_green ps-1">Обновить
                                     </button>
                                 </form>
@@ -105,7 +109,7 @@
                                         <h4 class="SelfStorage_green">Срок аренды</h4>
                                         <h4>{{rent.start_date}} - {{rent.end_date}}</h4>
                                         <h4 class="SelfStorage_green">Статус оплаты</h4>
-                                        <h4>{{rent.get_payment_status_display}}</h4>
+                                        <h4>{{rent.get_rent_status_display}}</h4>
                                         <div>
                                             <button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_green SelfStorage__btn2_green mb-3">
                                                 Продлить аренду
@@ -136,7 +140,7 @@
                                         <h4 class="SelfStorage_green">Срок аренды</h4>
                                         <h4>{{rent.start_date}} - {{rent.end_date}}</h4>
                                         <h4 class="SelfStorage_green">Статус оплаты</h4>
-                                        <h4>{{rent.get_payment_status_display}}</h4>
+                                        <h4>{{rent.get_rent_status_display}}</h4>
                                         <div>
                                             <button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_green SelfStorage__btn2_green mb-3">
                                                 Продлить аренду
@@ -163,8 +167,8 @@
                                         <h4>{{rent.box.number}}</h4>
                                         <h4 class="SelfStorage_green">Срок аренды</h4>
                                         <h4>{{rent.start_date}} - {{rent.end_date}}</h4>
-                                        <h4 class="SelfStorage_green">Статус оплаты</h4>
-                                        <h4>{{rent.get_payment_status_display}}</h4>
+                                        <h4 class="SelfStorage_green">Статус аренды</h4>
+                                        <h4>{{rent.get_rent_status_display}}</h4>
                                     </div>
                                 {% endfor %}
                             {% endif %}

@@ -1,6 +1,8 @@
 from datetime import date
 
 from django import forms
+from django.contrib.auth import get_user_model
+from phonenumber_field.formfields import PhoneNumberField, RegionalPhoneNumberWidget
 
 from .models import Consultation, Rent
 
@@ -23,19 +25,33 @@ class ConsultationForm(forms.ModelForm):
 
 
 class OrderForm(forms.ModelForm):
+
     start_date = forms.DateField(
-        label='Дата начала',
+        label='Дата начала*',
         widget=forms.widgets.SelectDateWidget(),
         initial=date.today
     )
     period = forms.IntegerField(
-        label='Срок аренды, мес'
+        label='Срок аренды, мес*'
+    )
+    phone_number = PhoneNumberField(
+        label='Номер телефона*',
+        region='RU',
+        widget=RegionalPhoneNumberWidget(region='RU')
+    )
+    address = forms.CharField(
+        label='Адрес забора вещей',
+        max_length=255,
+        required=False
     )
     promo_code = forms.CharField(
         label='Промокод',
         max_length=50,
+        required=False
     )
+
+    field_order = ('start_date', 'period', 'phone_number', 'address', 'promo_code')
 
     class Meta:
         model = Rent
-        fields = ('id', 'promo_code')
+        fields = ('id', 'phone_number', 'address', 'promo_code')

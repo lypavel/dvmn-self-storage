@@ -2,9 +2,11 @@ from datetime import date
 
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 
 from .coordinates import get_nearest_storage
 from .forms import ConsultationForm, OrderForm
@@ -89,7 +91,7 @@ def boxes(request, storage_id):
 def faq(request):
     return render(
         request,
-        'storage/faq.html',
+        'pages/faq.html',
         context={'consultation_form': ConsultationForm()}
     )
 
@@ -102,10 +104,10 @@ def profile(request):
     )
 
     active_rents = rents.filter(end_date__gte=date.today())
-    previous_rents = rents.filter(end_date__lt=date.today(), is_empty=True)
-    expired_rents = rents.filter(end_date__lt=date.today(), is_empty=False)
-
-    print(active_rents)
+    previous_rents = rents.filter(end_date__lt=date.today(),
+                                  box__is_empty=True)
+    expired_rents = rents.filter(end_date__lt=date.today(),
+                                 box__is_empty=False)
 
     return render(
         request,
@@ -180,7 +182,7 @@ def categorize_boxes(boxes):
 def order_consultation(request):
     return render(
         request,
-        'storage/order-consultation.html',
+        'storage/order/order-consultation.html',
         context={'consultation_form': ConsultationForm()}
     )
 
@@ -221,10 +223,12 @@ def order_box(request, box_id):
     }
 
     if box.owner is not None:
-        if box.owner.id != request.user.id:
-            return HttpResponse('Ячейка уже занята.')
+        return HttpResponse('Ячейка уже занята.')
 
     if request.method == 'POST':
+        if box.owner is not None:
+            return HttpResponse('Ячейка уже занята.')
+
         form = OrderForm(request.POST)
         if form.is_valid():
             rent = form.save(commit=False)
@@ -239,38 +243,32 @@ def order_box(request, box_id):
 
             Box.objects.filter(pk=box.id).update(owner=request.user)
 
-        context = {
-            'box': serialized_box,
-            'rent': rent,
-            'rent_period': period,
-            'order_form': None
-        }
+            user = request.user
+            if not user.phone_number:
+                get_user_model()\
+                    .objects\
+                    .filter(pk=user.id)\
+                    .update(phone_number=form.cleaned_data['phone_number'])
+            if not user.address:
+                get_user_model()\
+                    .objects\
+                    .filter(pk=user.id)\
+                    .update(address=form.cleaned_data['address'])
 
-        return render(request, 'storage/order-box.html', context)
+            context = {
+                'box': serialized_box,
+                'rent': rent,
+                'rent_period': period,
+                'order_form': None
+            }
+        else:
+            return redirect(reverse('storage:order-box', args=[box_id]))
+
+        return render(request, 'storage/order/order-box.html', context)
 
     context = {
         'box': serialized_box,
         'order_form': OrderForm()
     }
 
-    return render(request, 'storage/order-box.html', context)
-
-
-def confirm_box_order(request, box_id):
-    print(request.POST)
-
-    box = Box.objects.select_related('storage', 'owner').get(id=box_id)
-
-    serialized_box = {
-        'id': box.id,
-        'number': box.number,
-        'sizes': box.sizes,
-        'price': box.price,
-        'storage': f'{box.storage.city}, {box.storage.address}'
-    }
-
-    context = {
-        'box': serialized_box,
-        'total_price': 0
-    }
-    return (request, 'storage/order-confirm.html', context)
+    return render(request, 'storage/order/order-box.html', context)
