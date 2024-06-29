@@ -30,11 +30,13 @@
 			<h4 class="fw-lighter SelfStorage_green mb-5">Срок аренды: {{ rent_period }} мес.</h4>
 			<h4 class="fw-lighter SelfStorage_green mb-5">Цена заказа: {{ rent.price }} ₽</h4>
 			{% if rent.address %}
-				<h4 class="fw-lighter SelfStorage_green mb-5">Курьер заберёт вещи по адресу: {{ rent.address }}<br><br>Стоимость доставки вещей будет согласована с менеджером.</h4>
+				<h4 class="fw-lighter SelfStorage_green mb-5">Курьер заберёт вещи по адресу: {{ rent.address }}</h4>
 			{% endif %}
 			<h5 class="fw-lighter SelfStorage_grey mb-5">Наш менеджер скоро свяжется с вами для уточнения деталей.</h5>
 		{%endif%}
 	</div>
   </article>
+
+  {% include 'storage/rent_pros.html' %}
 </main>
 {% endblock %}

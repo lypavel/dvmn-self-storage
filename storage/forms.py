@@ -40,7 +40,7 @@ class OrderForm(forms.ModelForm):
         widget=RegionalPhoneNumberWidget(region='RU')
     )
     address = forms.CharField(
-        label='Адрес',
+        label='Адрес забора вещей',
         max_length=255,
         required=False
     )
