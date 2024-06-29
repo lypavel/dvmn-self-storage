@@ -89,7 +89,7 @@ def boxes(request, storage_id):
 def faq(request):
     return render(
         request,
-        'storage/faq.html',
+        'pages/faq.html',
         context={'consultation_form': ConsultationForm()}
     )
 
@@ -180,7 +180,7 @@ def categorize_boxes(boxes):
 def order_consultation(request):
     return render(
         request,
-        'storage/order-consultation.html',
+        'storage/order/order-consultation.html',
         context={'consultation_form': ConsultationForm()}
     )
 
@@ -246,14 +246,14 @@ def order_box(request, box_id):
             'order_form': None
         }
 
-        return render(request, 'storage/order-box.html', context)
+        return render(request, 'storage/order/order-box.html', context)
 
     context = {
         'box': serialized_box,
         'order_form': OrderForm()
     }
 
-    return render(request, 'storage/order-box.html', context)
+    return render(request, 'storage/order/order-box.html', context)
 
 
 def confirm_box_order(request, box_id):
