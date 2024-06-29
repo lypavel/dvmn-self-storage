@@ -1,6 +1,7 @@
-import datetime
+from datetime import datetime, timedelta
 from django.core.management.base import BaseCommand
 from django.core.mail import send_mail
+from django.db.models import Q
 from django.utils.timezone import make_aware
 
 from self_storage import settings
@@ -11,11 +12,19 @@ class Command(BaseCommand):
     help = 'Send email notifications for rents expiring in one day'
 
     def handle(self, *args, **kwargs):
-        tomorrow = make_aware(datetime.datetime.now() + datetime.timedelta(days=1))
+        days_left = (3, 7, 14, 30)
+        sending_dates = [
+            make_aware(datetime.now() + timedelta(days=day))
+            for day in days_left
+        ]
 
-        expiring_rents = Rent.objects.filter(
-            end_date=tomorrow.date()
-        ).select_related('box')
+        query = Q(end_date=sending_dates[0].date())
+        for sending_date in sending_dates:
+            query.add(Q(end_date=sending_date.date()), Q.OR)
+
+        expiring_rents = Rent.objects\
+            .filter(query)\
+            .select_related('box')
 
         for rent in expiring_rents:
             self.send_expiration_email(rent)
