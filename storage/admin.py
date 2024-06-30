@@ -53,6 +53,8 @@ class BoxAdmin(admin.ModelAdmin):
         'price',
         'storage'
     )
+
+    list_editable = ('is_available',)
     list_filter = ('is_available',)
     list_per_page = 20
 

@@ -7,7 +7,7 @@ from django.utils.timezone import make_aware
 
 from self_storage import settings
 from storage.models import Rent
-from .email_messages import SUBJECTS, expired_message, log_success
+from send_email.email_messages import SUBJECTS, expired_message, log_success
 
 
 class Command(BaseCommand):

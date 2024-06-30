@@ -1,9 +1,8 @@
-from datetime import date
-
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.db import transaction
+from django.db.models import Q
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -107,11 +106,11 @@ def profile(request):
         'box', 'box__storage', 'box__storage__city'
     )
 
-    active_rents = rents.filter(end_date__gte=date.today())
-    previous_rents = rents.filter(end_date__lt=date.today(),
-                                  rent_status='inactive')
-    expired_rents = rents.filter(end_date__lt=date.today(),
-                                 rent_status='inactive')
+    active_rents = rents.exclude(
+        Q(rent_status='inactive') | Q(rent_status='expired')
+    )
+    previous_rents = rents.filter(rent_status='inactive')
+    expired_rents = rents.filter(rent_status='expired')
 
     return render(
         request,
@@ -276,3 +275,9 @@ def order_box(request, box_id):
     }
 
     return render(request, 'storage/order/order-box.html', context)
+
+
+@login_required
+def send_qr(request):
+    # FIXME: Add qr code generation and sending email here
+    return render(request, 'qrcode/send_qr.html')

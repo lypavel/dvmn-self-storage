@@ -89,7 +89,11 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="Rent" role="tabpanel" aria-labelledby="Rent-tab">
-                        <h1 class="fw-bold SelfStorage_green mb-5">Добрый день, {{ user.first_name }}!</h1>
+                        {% if user.first_name %}
+                            <h1 class="fw-bold SelfStorage_green mb-5">Добрый день, {{ user.first_name }}!</h1>
+                        {% else %}
+                            <h1 class="fw-bold SelfStorage_green mb-5">Добрый день!</h1>
+                        {% endif %}
 
                         {% if not all_rents %}
                             <h4 class="SelfStorage_grey my-5">У вас еще нет заказов.<br>Но вы можете арендовать свой первый бокс  по  привлекательной цене прямо сейчас</h4>
@@ -116,9 +120,11 @@
                                             </button>
                                         </div>
                                         <div>
-                                            <button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3">
-                                                Открыть бокс
-                                            </button>
+                                            <a href="{% url 'storage:send_qr' %}">
+                                                <button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3">
+                                                    Открыть бокс
+                                                </button>
+                                            </a>
                                         </div>
                                         <a href="#" class="SelfStorage_orange">Нужна помощь?</a>
                                     </div>
@@ -147,9 +153,11 @@
                                             </button>
                                         </div>
                                         <div>
-                                            <button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3">
-                                                Открыть бокс
-                                            </button>
+                                            <a href="{% url 'storage:send_qr' %}">
+                                                <button class="btn fs_24 px-5 py-3 text-white border-8 SelfStorage__bg_orange SelfStorage__btn2_orange mb-3">
+                                                    Открыть бокс
+                                                </button>
+                                            </a>
                                         </div>
                                         <a href="#" class="SelfStorage_orange">Нужна помощь?</a>
                                     </div>

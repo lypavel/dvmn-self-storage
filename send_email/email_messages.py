@@ -6,6 +6,7 @@ from self_storage.settings import HOST_URL
 SUBJECTS = {
     'expiring_rent': 'Ваша аренда скоро закончится',
     'expired_rent': 'Срок вашей аренды истёк',
+    'qr_code': 'Ваш QR-код для доступа к боксу',
 }
 
 PROFILE_PAGE = reverse('storage:profile')
@@ -86,6 +87,15 @@ def expired_message(user_name,
         'Вы были переведены на повышенный тариф.\n'
         f'Если вы не заберёте свои вещи до {format_date(terminate_date)} '
         'или не продлите аренду, то они будут утилизированы.\n\n'
+        f'{user_profile(PROFILE_PAGE)}\n\n'
+        f'{MESSAGE_ENDING}'
+    )
+
+
+def qr_code_message(user_name, box_number, storage_address, expiring_date):
+    return (
+        f'{greeting(user_name)}\n\n'
+        f'{box_info(box_number, storage_address, expiring_date)}\n\n'
         f'{user_profile(PROFILE_PAGE)}\n\n'
         f'{MESSAGE_ENDING}'
     )
