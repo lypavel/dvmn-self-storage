@@ -95,7 +95,14 @@ def expired_message(user_name,
 def qr_code_message(user_name, box_number, storage_address, expiring_date):
     return (
         f'{greeting(user_name)}\n\n'
+        'Используйте QR-код из вложения к этому письму, чтобы открыть Ваш '
+        'бокс. QR-код действителен 24 часа, после чего Вам необходимо '
+        'сгенерировать новый в личном кабинете.\n'
+        'Вы можете забирать и оставлять вещи в Вашем боксе неограниченное'
+        'количество раз до истечения срока аренды.\n\n'
         f'{box_info(box_number, storage_address, expiring_date)}\n\n'
+        'Кроме того, вы можете заказать платную доставку своих вещей на дом '
+        'по телефону 8(800)000-00-00\n\n',
         f'{user_profile(PROFILE_PAGE)}\n\n'
         f'{MESSAGE_ENDING}'
     )
