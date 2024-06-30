@@ -6,10 +6,25 @@
 {% block content %}
 <main class="container mt-header">
 	{% if after_registration %}
-		<div style="background-color: rgb(101, 255, 101); border-radius: 15px;">
+		<div style="background-color: rgba(101, 255, 101, 0.459); border-radius: 15px;">
 			<p class="text-center fw-bold mt-4 mb-3 SelfStorage__bg_black">Регистрация прошла успешно. Проверьте вашу электронную почту и подтвердите аккаунт.</p>
 		</div>
+	{% else %}
+		{% if user_verified != None %}
+			{% if user_verified %}
+				<div style="background-color: rgba(101, 255, 101, 0.459); border-radius: 15px;">
+					<p class="text-center fw-bold mt-4 mb-3 SelfStorage__bg_black">Пользователь подтверждён. Используйте ваш email и пароль, чтобы <a href="{% url 'user:login' %}">войти в аккаунт</a>.</p>
+				</div>
+			{% else %}
+				<div style="background-color: rgba(255, 101, 101, 0.459); border-radius: 15px;">
+					<p class="text-center fw-bold mt-4 mb-3 SelfStorage__bg_black">Ошибка подтверждения пользователя. Свяжитесь с техподдержкой.</p>
+				</div>
+			{% endif %}
+		{% endif %}
 	{% endif %}
+	
+	
+	
 	{% include "storage/forms/consultation_form.html" %}
 
 	<article class="text-center row pt-header">

@@ -35,7 +35,10 @@ def register(request):
                 token=token,
                 uid=uid
             )
-            return redirect(reverse('storage:email_confirm'))
+            return redirect(
+                reverse('storage:index_after_registration',
+                        kwargs={'after_registration': True})
+            )
 
     return render(request, 'registration/registration.html')
 
@@ -44,14 +47,22 @@ def verify_email(request):
     token = request.GET.get('token')
     uid = request.GET.get('uid')
     if not token or not uid:
-        return redirect(reverse('storage:index'))
+        return redirect(
+            reverse('storage:index_user_verified',
+                    kwargs={'user_verified': False})
+        )
 
     pk = force_str(urlsafe_base64_decode(uid))
     user = User.objects.get(pk=pk)
     if default_token_generator.check_token(user, token):
         user.is_active = True
         user.save()
-    return redirect(reverse('storage:index'))
+    return redirect(
+        reverse(
+            'storage:index_user_verified',
+            kwargs={'user_verified': True}
+        )
+    )
 
 
 @login_required

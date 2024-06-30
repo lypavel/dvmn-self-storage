@@ -13,7 +13,7 @@ from .forms import ConsultationForm, OrderForm
 from .models import Storage, Box
 
 
-def index(request, after_registration=False):
+def index(request, after_registration=False, user_verified=None):
     nearest_storage_id = get_nearest_storage(request)
     if not nearest_storage_id:
         nearest_storage_id = Storage.objects \
@@ -30,14 +30,11 @@ def index(request, after_registration=False):
     context = {
         'nearest_storage': serialized_nearest_storage,
         'consultation_form': ConsultationForm(),
-        'after_registration': after_registration
+        'after_registration': after_registration,
+        'user_verified': user_verified
     }
 
     return render(request, 'storage/index.html', context)
-
-
-def confirm(request):
-    return index(request, after_registration=True)
 
 
 def storages(request):
