@@ -5,6 +5,11 @@
 
 {% block content %}
 <main class="container mt-header">
+	{% if after_registration %}
+		<div style="background-color: rgb(101, 255, 101); border-radius: 15px;">
+			<p class="text-center fw-bold mt-4 mb-3 SelfStorage__bg_black">Регистрация прошла успешно. Проверьте вашу электронную почту и подтвердите аккаунт.</p>
+		</div>
+	{% endif %}
 	{% include "storage/forms/consultation_form.html" %}
 
 	<article class="text-center row pt-header">

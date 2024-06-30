@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
@@ -14,6 +15,7 @@ from user.tasks import send_message_to_email
 User = get_user_model()
 
 
+@transaction.atomic()
 def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
@@ -33,7 +35,7 @@ def register(request):
                 token=token,
                 uid=uid
             )
-            return redirect(reverse('storage:index'))
+            return redirect(reverse('storage:email_confirm'))
 
     return render(request, 'registration/registration.html')
 
