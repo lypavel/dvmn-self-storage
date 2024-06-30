@@ -31,7 +31,7 @@ class RentAdminInline(admin.TabularInline):
 @admin.register(Storage)
 class StorageAdmin(admin.ModelAdmin):
     list_display = ('id', 'city', 'address')
-    search_fields = ('city',)
+    search_fields = ('city__name',)
     list_per_page = 20
 
     inlines = (StorageImageAdminInline,)
@@ -45,16 +45,32 @@ class StorageImageAdmin(admin.ModelAdmin):
 
 @admin.register(Box)
 class BoxAdmin(admin.ModelAdmin):
-    list_display = ('id', 'number', 'owner', 'type', 'price')
-    autocomplete_fields = ('owner',)
+    list_display = (
+        'id',
+        'number',
+        'is_available',
+        'volume',
+        'price',
+        'storage'
+    )
+    list_filter = ('is_available',)
     list_per_page = 20
+
+    search_fields = ('number',)
 
     inlines = (RentAdminInline,)
 
 
 @admin.register(Rent)
 class RentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'rent_status', 'start_date', 'end_date', 'promo_code')
+    list_display = (
+        'id',
+        'user',
+        'rent_status',
+        'start_date',
+        'end_date',
+        'promo_code'
+    )
     list_filter = ('rent_status', 'end_date',)
     list_per_page = 20
 
@@ -63,5 +79,9 @@ class RentAdmin(admin.ModelAdmin):
 
 @admin.register(Consultation)
 class ConsultationAdmin(admin.ModelAdmin):
-    list_display = ('email', 'status')
+    list_display = ('email', 'status', 'created_at', 'completed_at')
+    list_filter = ('status',)
+    list_editable = ('status', 'completed_at')
     list_per_page = 20
+
+    search_fields = ('email',)

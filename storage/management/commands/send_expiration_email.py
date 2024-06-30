@@ -25,7 +25,7 @@ class Command(BaseCommand):
             query.add(Q(end_date=sending_date.date()), Q.OR)
 
         expiring_rents = Rent.objects\
-            .filter(query)\
+            .filter(query & ~Q(rent_status='inactive'))\
             .select_related('box', 'box__storage', 'user')
 
         for rent in expiring_rents:
@@ -35,7 +35,7 @@ class Command(BaseCommand):
         user_email = rent.user.email
         subject = SUBJECTS['expiring_rent']
         message = expiration_message(
-            rent.user.username,
+            rent.user.first_name,
             rent.box.number,
             rent.box.storage.address,
             rent.end_date

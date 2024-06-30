@@ -39,7 +39,7 @@ class Command(BaseCommand):
         user_email = rent.user.email
         subject = SUBJECTS['expired_rent']
         message = expired_message(
-            rent.user.username,
+            rent.user.first_name,
             rent.box.number,
             rent.box.storage.address,
             rent.end_date,

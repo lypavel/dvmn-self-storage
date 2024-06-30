@@ -22,7 +22,8 @@ class City(models.Model):
     name = models.CharField(
         max_length=255,
         unique=True,
-        verbose_name='название'
+        verbose_name='название',
+        db_index=True
     )
     slug = models.SlugField(
         blank=True,
@@ -51,7 +52,7 @@ class StorageQuerySet(models.QuerySet):
     def annotate_boxes_available(self):
         return self.annotate(
             boxes_available=Count(
-                'boxes', filter=Q(boxes__owner=None)
+                'boxes', filter=Q(boxes__is_available=True)
             )
         )
 
@@ -113,7 +114,7 @@ class Storage(BaseModel):
         verbose_name_plural = 'Хранилища'
 
     def __str__(self):
-        return self.address
+        return f'{self.city}, {self.address}'
 
 
 class StorageImage(models.Model):
@@ -178,15 +179,8 @@ class Box(BaseModel):
     price = models.IntegerField(
         verbose_name='цена в месяц'
     )
-    owner = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        verbose_name='владелец',
-        blank=True,
-        null=True
-    )
-    is_empty = models.BooleanField(
-        verbose_name='Пустая',
+    is_available = models.BooleanField(
+        verbose_name='Доступна для аренды',
         db_index=True,
         default=True
     )
@@ -231,7 +225,7 @@ class Rent(BaseModel):
         verbose_name='Цена',
     )
     rent_status = models.CharField(
-        verbose_name='Статус аренды',
+        verbose_name='Статус',
         max_length=50,
         choices=RentStatus.choices,
         default=RentStatus.new,
