@@ -22,7 +22,7 @@ class Command(BaseCommand):
             for days in days_remain
         ]
 
-        query = Q(end_date=today.date())
+        query = Q(end_date=today.date() - relativedelta(days=1))
         for sending_date in sending_dates:
             query.add(Q(end_date=sending_date.date()), Q.OR)
 
