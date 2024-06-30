@@ -7,6 +7,7 @@ from django.utils.timezone import make_aware
 
 from self_storage import settings
 from storage.models import Rent
+from .email_messages import SUBJECTS, expired_message, log_success
 
 
 class Command(BaseCommand):
@@ -25,23 +26,33 @@ class Command(BaseCommand):
         for sending_date in sending_dates:
             query.add(Q(end_date=sending_date.date()), Q.OR)
 
-        expiring_rents = Rent.objects\
+        expired_rents = Rent.objects\
             .filter(query)\
-            .select_related('box')\
+            .select_related('box', 'box__storage', 'user')
 
-        expiring_rents.update(rent_status='expired')
+        expired_rents.update(rent_status='expired')
 
-        for rent in expiring_rents:
+        for rent in expired_rents:
             self.send_expiration_email(rent)
 
     def send_expiration_email(self, rent):
-        subject = 'Срок окончания аренды'
-        message = f'Срок аренды вашей ячейки {rent.box.number} истек. Вы были переведены на повышенный тариф. Заберите свои вещи до {rent.end_date + relativedelta(months=6)} или продлите аренду, в противном случае ваши вещи будут утилизированы.'
-        recipient_list = [rent.user.email]
+        user_email = rent.user.email
+        subject = SUBJECTS['expired_rent']
+        message = expired_message(
+            rent.user.username,
+            rent.box.number,
+            rent.box.storage.address,
+            rent.end_date,
+            rent.end_date + relativedelta(months=6)
+        )
+
+        recipient_list = [user_email]
         send_mail(
             subject,
             message,
             settings.EMAIL_HOST_USER,
             recipient_list
         )
-        self.stdout.write(self.style.SUCCESS(f'Сообщение отправление успешно пользователю {rent.user.email}'))
+
+        success = log_success(user_email)
+        self.stdout.write(self.style.SUCCESS(success))
