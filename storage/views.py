@@ -59,7 +59,9 @@ def boxes(request, storage_id):
     except Http404:
         return redirect('storage:storages')
 
-    all_boxes = current_storage.boxes.filter(owner=None)
+    all_boxes = current_storage.boxes\
+        .filter(is_available=True)\
+        .order_by('volume')
     serialized_boxes = [serialize_box(box) for box in all_boxes]
 
     categorized_boxes = categorize_boxes(serialized_boxes)
@@ -105,9 +107,9 @@ def profile(request):
 
     active_rents = rents.filter(end_date__gte=date.today())
     previous_rents = rents.filter(end_date__lt=date.today(),
-                                  box__is_empty=True)
+                                  rent_status='inactive')
     expired_rents = rents.filter(end_date__lt=date.today(),
-                                 box__is_empty=False)
+                                 rent_status='inactive')
 
     return render(
         request,
@@ -212,7 +214,7 @@ def process_consultation(request):
 @transaction.atomic()
 @login_required
 def order_box(request, box_id):
-    box = Box.objects.select_related('storage', 'owner').get(id=box_id)
+    box = Box.objects.select_related('storage', 'storage__city').get(id=box_id)
 
     serialized_box = {
         'id': box.id,
@@ -222,11 +224,11 @@ def order_box(request, box_id):
         'storage': f'{box.storage.city}, {box.storage.address}'
     }
 
-    if box.owner is not None:
+    if not box.is_available:
         return HttpResponse('Ячейка уже занята.')
 
     if request.method == 'POST':
-        if box.owner is not None:
+        if not box.is_available:
             return HttpResponse('Ячейка уже занята.')
 
         form = OrderForm(request.POST)
@@ -241,7 +243,7 @@ def order_box(request, box_id):
             rent.end_date = start_date + relativedelta(months=period)
             rent.save()
 
-            Box.objects.filter(pk=box.id).update(owner=request.user)
+            Box.objects.filter(pk=box.id).update(is_available=False)
 
             user = request.user
             if not user.phone_number:
