@@ -25,6 +25,7 @@
 				<div><p>* - обязательно для заполнения</p></div>
 				
 				<input type="submit" value="Оформить заказ" class="btn border-8 py-3 px-5 w-100 text-white fs_24 SelfStorage__bg_orange SelfStorage__btn2_orange">
+				<span class="text-center fw-light">Нажимая на кнопку, вы подтверждаете свое <a href="{% static 'pdfs/agreement.pdf' %}" class="link-dark">согласие на обработку персональных данных</a></span>
 			</form>
 		{% else %}
 			<h4 class="fw-lighter SelfStorage_green mb-5">Срок аренды: {{ rent_period }} мес.</h4>

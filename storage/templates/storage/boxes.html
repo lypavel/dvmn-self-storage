@@ -83,7 +83,7 @@
 		</div>
 
 		{% include 'storage/rent_pros.html' %}
-
+		
 		<form class="row mt-5 d-none">
 			<div class="col-6 col-lg-3">
 				<input type="radio" name="BOXES_FILTER" id="ALL_BOXES" class="SelfStorage_radio d-none" checked>
@@ -190,6 +190,10 @@
 					</a>
 				{% endfor %}
 			</div>
+		</div>
+
+		<div class="row mt-5">
+			<h5 class="fw-lighter SelfStorage_grey mb-5">С более подробной информацией о ценообразовании вы можете ознакомиться в разделе <a href="{% static 'pdfs/prices.pdf' %}" class="link-dark">Тарифы</a>.</h5>
 		</div>
 	</article>
 </main>

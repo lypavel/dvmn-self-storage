@@ -68,6 +68,7 @@ class RentAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'user',
+        'phone_number',
         'rent_status',
         'start_date',
         'end_date',
