@@ -9,3 +9,4 @@ pytils==0.4.1
 requests==2.32.3
 celery==5.4.0
 django-redis==5.4.0
+qrcode==7.4.2

@@ -184,6 +184,12 @@ class Box(BaseModel):
         db_index=True,
         default=True
     )
+    password = models.CharField(
+        null=True,
+        blank=True,
+        max_length=15,
+        verbose_name='Пароль'
+    )
 
     class Meta:
         verbose_name = 'Ячейка'

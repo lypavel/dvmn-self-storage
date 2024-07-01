@@ -108,8 +108,8 @@ LOGIN_URL = 'user:login'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = 'user:login'
 
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
+CELERY_BROKER_URL = os.getenv("CELERY_WORKER_LOCATION", "redis://localhost:6379")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_WORKER_LOCATION", "redis://localhost:6379")
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
@@ -124,3 +124,4 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
 HOST_URL = env.str('HOST_URL', 'http://127.0.0.1:8000')
+GEO_API_KEY = env.str('GEO_API_KEY', None)
