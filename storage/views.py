@@ -1,6 +1,6 @@
 from dateutil.relativedelta import relativedelta
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models import Q
 from django.http import Http404, HttpResponse
@@ -10,6 +10,7 @@ from django.urls import reverse
 from .coordinates import get_nearest_storage
 from .forms import ConsultationForm, OrderForm
 from .models import Storage, Box
+from .tasks import send_qr_to_email
 
 
 def index(request, after_registration=False, user_verified=None):
@@ -60,8 +61,8 @@ def boxes(request, storage_id):
     except Http404:
         return redirect('storage:storages')
 
-    all_boxes = current_storage.boxes\
-        .filter(is_available=True)\
+    all_boxes = current_storage.boxes \
+        .filter(is_available=True) \
         .order_by('volume')
     serialized_boxes = [serialize_box(box) for box in all_boxes]
 
@@ -248,14 +249,14 @@ def order_box(request, box_id):
 
             user = request.user
             if not user.phone_number:
-                get_user_model()\
-                    .objects\
-                    .filter(pk=user.id)\
+                get_user_model() \
+                    .objects \
+                    .filter(pk=user.id) \
                     .update(phone_number=form.cleaned_data['phone_number'])
             if not user.address:
-                get_user_model()\
-                    .objects\
-                    .filter(pk=user.id)\
+                get_user_model() \
+                    .objects \
+                    .filter(pk=user.id) \
                     .update(address=form.cleaned_data['address'])
 
             context = {
@@ -278,6 +279,11 @@ def order_box(request, box_id):
 
 
 @login_required
-def send_qr(request):
-    # FIXME: Add qr code generation and sending email here
+def send_qr(request, rent_id):
+    user = request.user
+    rent = get_object_or_404(user.rents.all(), pk=rent_id)
+    send_qr_to_email.delay(
+        user_id=user.id,
+        rent_id=rent.id
+    )
     return render(request, 'qrcode/send_qr.html')

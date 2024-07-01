@@ -19,7 +19,7 @@ urlpatterns = [
         name='process-consultation'
     ),
     path('order-box/<int:box_id>', order_box, name='order-box'),
-    path('send_qr', send_qr, name='send_qr'),
+    path('send_qr/<int:rent_id>', send_qr, name='send_qr'),
 
     path('email-confirm/<str:user_verified>',
          index,
