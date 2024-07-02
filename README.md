@@ -43,6 +43,8 @@ cd dvmn-self-storage
 
 [Установите Python](https://www.python.org/), если этого ещё не сделали.
 
+[Установите и запустите Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/), если этого ещё не сделали.
+
 Проверьте, что `python` установлен и корректно настроен. Запустите его в командной строке:
 
 ```sh
