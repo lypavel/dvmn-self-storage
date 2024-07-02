@@ -62,9 +62,10 @@ pip install -r requirements.txt
 
 ```sh
 python manage.py runserver
+```
 
 
-```Запустите Celery:
+Запустите Celery:
 
 ```sh
 celery -A self_storage worker -l INFO
