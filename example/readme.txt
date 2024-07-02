@@ -1,4 +1,4 @@
 Вход в админку:
 Пользователь: admin
 Пароль: admin
-Email: admin@example.ru
+Email: admin@example.com
