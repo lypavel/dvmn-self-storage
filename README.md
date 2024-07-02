@@ -73,6 +73,14 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
+Создайте файл базы данных и примените миграции
+
+```sh
+python manage.py migrate
+```
+
+или используйте нашу [тестовую базу данных](https://github.com/lypavel/dvmn-self-storage/tree/main/example) из папки `example`.
+
 Запустите сервер:
 
 ```sh
